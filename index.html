@@ -21,16 +21,57 @@
             data() {
                 return {
                     products: products,  // Storing products data from products.js
+                    sortAttribute: 'price',  // Default sort by price
+                    sortOrder: 'asc',  // Default ascending order
                 };
             },
+
+            methods: {
+                // Method to handle sorting
+                sortProducts() {
+                    this.products.sort((a, b) => {
+                        let comparison = 0;
+                        // Sorting logic for name or location (alphabetical)
+                        if (this.sortAttribute === 'name' || this.sortAttribute === 'location') {
+                            comparison = a[this.sortAttribute].localeCompare(b[this.sortAttribute]);
+                        } else {
+                            // Sorting logic for numerical values (price or availableInventory)
+                            comparison = a[this.sortAttribute] - b[this.sortAttribute];
+                        }
+                        // Return either ascending or descending order
+                        return this.sortOrder === 'asc' ? comparison : -comparison;
+                    });
+                }
+            },
+
             template: `
                 <div>
                     <h1>Welcome to ActivityHive!</h1>
+
+                    <!-- Sorting Controls -->
+                    <div class="sorting-controls">
+                        <label for="sort-attribute">Sort By:</label>
+                        <select id="sort-attribute" v-model="sortAttribute" @change="sortProducts">
+                            <option value="name">Name</option>
+                            <option value="price">Price</option>
+                            <option value="availableInventory">Availability</option>
+                            <option value="location">Location</option>
+                        </select>
+
+                        <label for="sort-order">Order:</label>
+                        <select id="sort-order" v-model="sortOrder" @change="sortProducts">
+                            <option value="asc">Ascending</option>
+                            <option value="desc">Descending</option>
+                        </select>
+
+                        <button @click="sortProducts">Sort</button>
+                    </div>
+
                     <!-- Displaying all products dynamically -->
                     <div v-for="product in products" :key="product.id" class="product-item">
                         <h2>{{ product.name }}</h2>
                         <p>{{ product.description }}</p>
-                        <p>Price: $ {{ product.price }}</p>
+                        <p>Price: ${{ product.price }}</p>
                         <p>Location: {{ product.location }}</p>
                         <p>Available: {{ product.availableInventory }}</p>
                         <p>Rating: {{ product.rating }} stars</p>
