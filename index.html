@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ActivityHive</title>
+    <!-- Using Vue 3 via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.2.41"></script>
+    <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+    <!-- Main container where Vue will manage the content -->
+    <div id="app"></div>
+
+    <script type="module">
+        // Importing products data from products.js
+        import { products } from './products.js';
+
+        // Creating a Vue instance
+        const app = Vue.createApp({
+            data() {
+                return {
+                    products: products,  // Storing products data from products.js
+                };
+            },
+            template: `
+                <div>
+                    <h1>Welcome to ActivityHive!</h1>
+                    <!-- Displaying all products dynamically -->
+                    <div v-for="product in products" :key="product.id" class="product-item">
+                        <h2>{{ product.name }}</h2>
+                        <p>{{ product.description }}</p>
+                        <p>Price: $ {{ product.price }}</p>
+                        <p>Location: {{ product.location }}</p>
+                        <p>Available: {{ product.availableInventory }}</p>
+                        <p>Rating: {{ product.rating }} stars</p>
+                    </div>
+                </div>
+            `
+        });
+
+        // Mounting the Vue app to the div with id="app"
+        app.mount('#app');
+    </script>
+</body>
+</html>
