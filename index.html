@@ -21,6 +21,7 @@
             data() {
                 return {
                     products: products,  // Storing products data from products.js
+                    cart: [],  // Cart to store products added to the cart
                     sortAttribute: 'price',  // Default sort by price
                     sortOrder: 'asc',  // Default ascending order
                 };
@@ -41,6 +42,20 @@
                         // Return either ascending or descending order
                         return this.sortOrder === 'asc' ? comparison : -comparison;
                     });
+                },
+
+                // Method to add a product to the cart
+                addToCart(product) {
+                    // Check if the product is already in the cart
+                    const cartItem = this.cart.find(item => item.id === product.id);
+                    if (cartItem) {
+                        cartItem.quantity++;  // Increase quantity if already in the cart
+                    } else {
+                        this.cart.push({ ...product, quantity: 1 });  // Add the product to the cart
+                    }
+
+                    // Decrease the available inventory when a product is added to the cart
+                    product.availableInventory--;
                 }
             },
 
@@ -51,7 +66,7 @@
                     <!-- Sorting Controls -->
                     <div class="sorting-controls">
                         <label for="sort-attribute">Sort By:</label>
-                        <select id="sort-attribute" v-model="sortAttribute" @change="sortProducts">
+                        <select id="sort-attribute" v-model="sortAttribute">
                             <option value="name">Name</option>
                             <option value="price">Price</option>
                             <option value="availableInventory">Availability</option>
@@ -59,7 +74,7 @@
                         </select>
 
                         <label for="sort-order">Order:</label>
-                        <select id="sort-order" v-model="sortOrder" @change="sortProducts">
+                        <select id="sort-order" v-model="sortOrder">
                             <option value="asc">Ascending</option>
                             <option value="desc">Descending</option>
                         </select>
@@ -75,6 +90,20 @@
                         <p>Location: {{ product.location }}</p>
                         <p>Available: {{ product.availableInventory }}</p>
                         <p>Rating: {{ product.rating }} stars</p>
+
+                        <!-- Add to Cart button: Enabled only if inventory is available -->
+                        <button @click="addToCart(product)" v-if="product.availableInventory > 0">Add to Cart</button>
+                        <button disabled v-else>No Spaces</button>
+                    </div>
+
+                    <!-- Cart Info (just for testing) -->
+                    <div v-if="cart.length > 0">
+                        <h2>Your Cart</h2>
+                        <ul>
+                            <li v-for="item in cart" :key="item.id">
+                                {{ item.name }} - Quantity: {{ item.quantity }} - Price: ${{ item.price }} x {{ item.quantity }}
+                            </li>
+                        </ul>
                     </div>
                 </div>
             `
